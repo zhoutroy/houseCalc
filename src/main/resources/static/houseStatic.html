@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body >
+    <div>
+    <!--<form method="post">-->
+        <div class="form-group">
+            房屋类型:
+            <label class="radio-inline">
+                <input type="radio" name="isCommon" value="true" >普通
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="isCommon" value="false" checked="checked">非普通
+            </label>
+        </div>
+        <div class="form-group">
+            是否为首套:
+            <label class="radio-inline">
+                <input type="radio" name="isFirst" value="true">首套
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="isFirst" value="false" checked="checked">非首套
+            </label>
+        </div>
+        <div class="form-group">
+            是否有贷款记录:
+            <label class="radio-inline">
+                <input type="radio" name="hasLoan" value="true" checked="checked">是
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="hasLoan" value="false" >否
+            </label>
+        </div>
+        <div class="form-group">
+            是否只有这一套住房:
+            <label class="radio-inline">
+                <input type="radio" name="isSingle" value="true" checked="checked">是
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="isSingle" value="false">否
+            </label>
+        </div>
+        <div class="form-group">
+            是否是动迁房:
+            <label class="radio-inline">
+                <input type="radio" name="isRelocate" value="true">是
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="isRelocate" value="false" checked="checked">否
+            </label>
+        </div>
+        <div class="form-group">
+            房产年限:
+            <label class="radio-inline">
+                <input type="radio" name="houseAge" value="5" checked="checked">满5年
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="houseAge" value="2">满2年
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="houseAge" value="0">不足2年
+            </label>
+        </div>
+        <div class="form-group">
+            建筑面积:
+            <label class="radio-inline">
+                <input type="radio" name="area" value="90" checked="checked">大于90平米
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="area" value="80">小于90平米
+            </label>
+        </div>
+        <div class="form-group">
+            中介费:
+            <label class="radio-inline">
+                <input type="radio" name="agency" value="1">1%
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="agency" value="2" checked="checked">2%
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="agency" value="3">3%
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="agency" value="4">4%
+            </label>
+        </div>
+        <div class="form-group">
+            <label for="lastPrice">房东之前买入价(单位:元)</label>
+            <input type="tel" class="form-control" id="lastPrice" placeholder="买入价" value="3000000" />
+        </div>
+        <button id="calculator" class="btn btn-default">生成</button>
+    <!--</form>-->
+    </div>
+<div id="container" style="height: 100%;min-height: 600px;"></div>
+    <p id="initPaymentDescription"></p>
+    <p id="deedTaxDescription"></p>
+    <p id="incrementTaxDescription"></p>
+    <p id="additionalTaxDescription"></p>
+    <p id="incomeTaxDescription"></p>
+<script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
+<script type="text/javascript">
+
+    var houseOjb = {
+        calc : function() {
+            var data = {"initPaymentDescription":"二套房,非普通住宅，首付=核定价*70%","deedTaxDescription":"非首套房，契税=(核定价-增值税)*3%","incrementTaxDescription":"满两年不唯一，增值税=(核定价-买入价)/1.05*5%","agencyCostDescription":"中介费=核定价*2%","additionalTaxDescription":"附加税 = 增值税 / 5% * 0.3%","incomeTaxDescription":"满五唯一没有个税","houses":[{"totalPrice":3000000.0,"buyer":{"deedTax":90000.0,"agencyCost":60000.0,"initPayment":2100000.0},"seller":{"incrementTax":0.0,"additionalTax":0.0,"incomeTax":0.0}},{"totalPrice":3045000.0,"buyer":{"deedTax":91285.0,"agencyCost":60900.0,"initPayment":2131500.0},"seller":{"incrementTax":2142.0,"additionalTax":128.0,"incomeTax":0.0}},{"totalPrice":3090000.0,"buyer":{"deedTax":92571.0,"agencyCost":61800.0,"initPayment":2163000.0},"seller":{"incrementTax":4285.0,"additionalTax":257.0,"incomeTax":0.0}},{"totalPrice":3135000.0,"buyer":{"deedTax":93857.0,"agencyCost":62700.0,"initPayment":2194500.0},"seller":{"incrementTax":6428.0,"additionalTax":385.0,"incomeTax":0.0}},{"totalPrice":3180000.0,"buyer":{"deedTax":95142.0,"agencyCost":63600.0,"initPayment":2226000.0},"seller":{"incrementTax":8571.0,"additionalTax":514.0,"incomeTax":0.0}},{"totalPrice":3225000.0,"buyer":{"deedTax":96428.0,"agencyCost":64500.0,"initPayment":2257500.0},"seller":{"incrementTax":10714.0,"additionalTax":642.0,"incomeTax":0.0}},{"totalPrice":3270000.0,"buyer":{"deedTax":97714.0,"agencyCost":65400.0,"initPayment":2289000.0},"seller":{"incrementTax":12857.0,"additionalTax":771.0,"incomeTax":0.0}},{"totalPrice":3315000.0,"buyer":{"deedTax":99000.0,"agencyCost":66300.0,"initPayment":2320500.0},"seller":{"incrementTax":15000.0,"additionalTax":900.0,"incomeTax":0.0}},{"totalPrice":3360000.0,"buyer":{"deedTax":100285.0,"agencyCost":67200.0,"initPayment":2352000.0},"seller":{"incrementTax":17142.0,"additionalTax":1028.0,"incomeTax":0.0}},{"totalPrice":3405000.0,"buyer":{"deedTax":101571.0,"agencyCost":68100.0,"initPayment":2383500.0},"seller":{"incrementTax":19285.0,"additionalTax":1157.0,"incomeTax":0.0}},{"totalPrice":3450000.0,"buyer":{"deedTax":102857.0,"agencyCost":69000.0,"initPayment":2415000.0},"seller":{"incrementTax":21428.0,"additionalTax":1285.0,"incomeTax":0.0}},{"totalPrice":3495000.0,"buyer":{"deedTax":104142.0,"agencyCost":69900.0,"initPayment":2446500.0},"seller":{"incrementTax":23571.0,"additionalTax":1414.0,"incomeTax":0.0}},{"totalPrice":3540000.0,"buyer":{"deedTax":105428.0,"agencyCost":70800.0,"initPayment":2478000.0},"seller":{"incrementTax":25714.0,"additionalTax":1542.0,"incomeTax":0.0}},{"totalPrice":3585000.0,"buyer":{"deedTax":106714.0,"agencyCost":71700.0,"initPayment":2509500.0},"seller":{"incrementTax":27857.0,"additionalTax":1671.0,"incomeTax":0.0}},{"totalPrice":3630000.0,"buyer":{"deedTax":108000.0,"agencyCost":72600.0,"initPayment":2541000.0},"seller":{"incrementTax":30000.0,"additionalTax":1800.0,"incomeTax":0.0}},{"totalPrice":3675000.0,"buyer":{"deedTax":109285.0,"agencyCost":73500.0,"initPayment":2572500.0},"seller":{"incrementTax":32142.0,"additionalTax":1928.0,"incomeTax":0.0}},{"totalPrice":3720000.0,"buyer":{"deedTax":110571.0,"agencyCost":74400.0,"initPayment":2604000.0},"seller":{"incrementTax":34285.0,"additionalTax":2057.0,"incomeTax":0.0}},{"totalPrice":3765000.0,"buyer":{"deedTax":111857.0,"agencyCost":75300.0,"initPayment":2635500.0},"seller":{"incrementTax":36428.0,"additionalTax":2185.0,"incomeTax":0.0}},{"totalPrice":3810000.0,"buyer":{"deedTax":113142.0,"agencyCost":76200.0,"initPayment":2667000.0},"seller":{"incrementTax":38571.0,"additionalTax":2314.0,"incomeTax":0.0}},{"totalPrice":3855000.0,"buyer":{"deedTax":114428.0,"agencyCost":77100.0,"initPayment":2698500.0},"seller":{"incrementTax":40714.0,"additionalTax":2442.0,"incomeTax":0.0}},{"totalPrice":3900000.0,"buyer":{"deedTax":115714.0,"agencyCost":78000.0,"initPayment":2730000.0},"seller":{"incrementTax":42857.0,"additionalTax":2571.0,"incomeTax":0.0}},{"totalPrice":3945000.0,"buyer":{"deedTax":117000.0,"agencyCost":78900.0,"initPayment":2761500.0},"seller":{"incrementTax":45000.0,"additionalTax":2700.0,"incomeTax":0.0}},{"totalPrice":3990000.0,"buyer":{"deedTax":118285.0,"agencyCost":79800.0,"initPayment":2793000.0},"seller":{"incrementTax":47142.0,"additionalTax":2828.0,"incomeTax":0.0}},{"totalPrice":4035000.0,"buyer":{"deedTax":119571.0,"agencyCost":80700.0,"initPayment":2824500.0},"seller":{"incrementTax":49285.0,"additionalTax":2957.0,"incomeTax":0.0}},{"totalPrice":4080000.0,"buyer":{"deedTax":120857.0,"agencyCost":81600.0,"initPayment":2856000.0},"seller":{"incrementTax":51428.0,"additionalTax":3085.0,"incomeTax":0.0}},{"totalPrice":4125000.0,"buyer":{"deedTax":122142.0,"agencyCost":82500.0,"initPayment":2887500.0},"seller":{"incrementTax":53571.0,"additionalTax":3214.0,"incomeTax":0.0}},{"totalPrice":4170000.0,"buyer":{"deedTax":123428.0,"agencyCost":83400.0,"initPayment":2919000.0},"seller":{"incrementTax":55714.0,"additionalTax":3342.0,"incomeTax":0.0}},{"totalPrice":4215000.0,"buyer":{"deedTax":124714.0,"agencyCost":84300.0,"initPayment":2950500.0},"seller":{"incrementTax":57857.0,"additionalTax":3471.0,"incomeTax":0.0}},{"totalPrice":4260000.0,"buyer":{"deedTax":126000.0,"agencyCost":85200.0,"initPayment":2982000.0},"seller":{"incrementTax":60000.0,"additionalTax":3600.0,"incomeTax":0.0}},{"totalPrice":4305000.0,"buyer":{"deedTax":127285.0,"agencyCost":86100.0,"initPayment":3013500.0},"seller":{"incrementTax":62142.0,"additionalTax":3728.0,"incomeTax":0.0}},{"totalPrice":4350000.0,"buyer":{"deedTax":128571.0,"agencyCost":87000.0,"initPayment":3045000.0},"seller":{"incrementTax":64285.0,"additionalTax":3857.0,"incomeTax":0.0}},{"totalPrice":4395000.0,"buyer":{"deedTax":129857.0,"agencyCost":87900.0,"initPayment":3076500.0},"seller":{"incrementTax":66428.0,"additionalTax":3985.0,"incomeTax":0.0}},{"totalPrice":4440000.0,"buyer":{"deedTax":131142.0,"agencyCost":88800.0,"initPayment":3108000.0},"seller":{"incrementTax":68571.0,"additionalTax":4114.0,"incomeTax":0.0}},{"totalPrice":4485000.0,"buyer":{"deedTax":132428.0,"agencyCost":89700.0,"initPayment":3139500.0},"seller":{"incrementTax":70714.0,"additionalTax":4242.0,"incomeTax":0.0}},{"totalPrice":4530000.0,"buyer":{"deedTax":133714.0,"agencyCost":90600.0,"initPayment":3171000.0},"seller":{"incrementTax":72857.0,"additionalTax":4371.0,"incomeTax":0.0}},{"totalPrice":4575000.0,"buyer":{"deedTax":135000.0,"agencyCost":91500.0,"initPayment":3202500.0},"seller":{"incrementTax":75000.0,"additionalTax":4500.0,"incomeTax":0.0}},{"totalPrice":4620000.0,"buyer":{"deedTax":136285.0,"agencyCost":92400.0,"initPayment":3234000.0},"seller":{"incrementTax":77142.0,"additionalTax":4628.0,"incomeTax":0.0}},{"totalPrice":4665000.0,"buyer":{"deedTax":137571.0,"agencyCost":93300.0,"initPayment":3265500.0},"seller":{"incrementTax":79285.0,"additionalTax":4757.0,"incomeTax":0.0}},{"totalPrice":4710000.0,"buyer":{"deedTax":138857.0,"agencyCost":94200.0,"initPayment":3297000.0},"seller":{"incrementTax":81428.0,"additionalTax":4885.0,"incomeTax":0.0}},{"totalPrice":4755000.0,"buyer":{"deedTax":140142.0,"agencyCost":95100.0,"initPayment":3328500.0},"seller":{"incrementTax":83571.0,"additionalTax":5014.0,"incomeTax":0.0}},{"totalPrice":4800000.0,"buyer":{"deedTax":141428.0,"agencyCost":96000.0,"initPayment":3360000.0},"seller":{"incrementTax":85714.0,"additionalTax":5142.0,"incomeTax":0.0}},{"totalPrice":4845000.0,"buyer":{"deedTax":142714.0,"agencyCost":96900.0,"initPayment":3391500.0},"seller":{"incrementTax":87857.0,"additionalTax":5271.0,"incomeTax":0.0}},{"totalPrice":4890000.0,"buyer":{"deedTax":144000.0,"agencyCost":97800.0,"initPayment":3423000.0},"seller":{"incrementTax":90000.0,"additionalTax":5400.0,"incomeTax":0.0}},{"totalPrice":4935000.0,"buyer":{"deedTax":145285.0,"agencyCost":98700.0,"initPayment":3454500.0},"seller":{"incrementTax":92142.0,"additionalTax":5528.0,"incomeTax":0.0}},{"totalPrice":4980000.0,"buyer":{"deedTax":146571.0,"agencyCost":99600.0,"initPayment":3486000.0},"seller":{"incrementTax":94285.0,"additionalTax":5657.0,"incomeTax":0.0}},{"totalPrice":5025000.0,"buyer":{"deedTax":147857.0,"agencyCost":100500.0,"initPayment":3517500.0},"seller":{"incrementTax":96428.0,"additionalTax":5785.0,"incomeTax":0.0}},{"totalPrice":5070000.0,"buyer":{"deedTax":149142.0,"agencyCost":101400.0,"initPayment":3549000.0},"seller":{"incrementTax":98571.0,"additionalTax":5914.0,"incomeTax":0.0}},{"totalPrice":5115000.0,"buyer":{"deedTax":150428.0,"agencyCost":102300.0,"initPayment":3580500.0},"seller":{"incrementTax":100714.0,"additionalTax":6042.0,"incomeTax":0.0}},{"totalPrice":5160000.0,"buyer":{"deedTax":151714.0,"agencyCost":103200.0,"initPayment":3612000.0},"seller":{"incrementTax":102857.0,"additionalTax":6171.0,"incomeTax":0.0}},{"totalPrice":5205000.0,"buyer":{"deedTax":153000.0,"agencyCost":104100.0,"initPayment":3643500.0},"seller":{"incrementTax":105000.0,"additionalTax":6300.0,"incomeTax":0.0}},{"totalPrice":5250000.0,"buyer":{"deedTax":154285.0,"agencyCost":105000.0,"initPayment":3674999.0},"seller":{"incrementTax":107142.0,"additionalTax":6428.0,"incomeTax":0.0}},{"totalPrice":5295000.0,"buyer":{"deedTax":155571.0,"agencyCost":105900.0,"initPayment":3706499.0},"seller":{"incrementTax":109285.0,"additionalTax":6557.0,"incomeTax":0.0}},{"totalPrice":5340000.0,"buyer":{"deedTax":156857.0,"agencyCost":106800.0,"initPayment":3737999.0},"seller":{"incrementTax":111428.0,"additionalTax":6685.0,"incomeTax":0.0}},{"totalPrice":5385000.0,"buyer":{"deedTax":158142.0,"agencyCost":107700.0,"initPayment":3769499.0},"seller":{"incrementTax":113571.0,"additionalTax":6814.0,"incomeTax":0.0}},{"totalPrice":5430000.0,"buyer":{"deedTax":159428.0,"agencyCost":108600.0,"initPayment":3800999.0},"seller":{"incrementTax":115714.0,"additionalTax":6942.0,"incomeTax":0.0}},{"totalPrice":5475000.0,"buyer":{"deedTax":160714.0,"agencyCost":109500.0,"initPayment":3832499.0},"seller":{"incrementTax":117857.0,"additionalTax":7071.0,"incomeTax":0.0}},{"totalPrice":5520000.0,"buyer":{"deedTax":162000.0,"agencyCost":110400.0,"initPayment":3863999.0},"seller":{"incrementTax":120000.0,"additionalTax":7200.0,"incomeTax":0.0}},{"totalPrice":5565000.0,"buyer":{"deedTax":163285.0,"agencyCost":111300.0,"initPayment":3895499.0},"seller":{"incrementTax":122142.0,"additionalTax":7328.0,"incomeTax":0.0}},{"totalPrice":5610000.0,"buyer":{"deedTax":164571.0,"agencyCost":112200.0,"initPayment":3926999.0},"seller":{"incrementTax":124285.0,"additionalTax":7457.0,"incomeTax":0.0}},{"totalPrice":5655000.0,"buyer":{"deedTax":165857.0,"agencyCost":113100.0,"initPayment":3958499.0},"seller":{"incrementTax":126428.0,"additionalTax":7585.0,"incomeTax":0.0}},{"totalPrice":5700000.0,"buyer":{"deedTax":167142.0,"agencyCost":114000.0,"initPayment":3989999.0},"seller":{"incrementTax":128571.0,"additionalTax":7714.0,"incomeTax":0.0}},{"totalPrice":5745000.0,"buyer":{"deedTax":168428.0,"agencyCost":114900.0,"initPayment":4021499.0},"seller":{"incrementTax":130714.0,"additionalTax":7842.0,"incomeTax":0.0}},{"totalPrice":5790000.0,"buyer":{"deedTax":169714.0,"agencyCost":115800.0,"initPayment":4052999.0},"seller":{"incrementTax":132857.0,"additionalTax":7971.0,"incomeTax":0.0}},{"totalPrice":5835000.0,"buyer":{"deedTax":171000.0,"agencyCost":116700.0,"initPayment":4084499.0},"seller":{"incrementTax":135000.0,"additionalTax":8100.0,"incomeTax":0.0}},{"totalPrice":5880000.0,"buyer":{"deedTax":172285.0,"agencyCost":117600.0,"initPayment":4115999.0},"seller":{"incrementTax":137142.0,"additionalTax":8228.0,"incomeTax":0.0}},{"totalPrice":5925000.0,"buyer":{"deedTax":173571.0,"agencyCost":118500.0,"initPayment":4147499.0},"seller":{"incrementTax":139285.0,"additionalTax":8357.0,"incomeTax":0.0}},{"totalPrice":5970000.0,"buyer":{"deedTax":174857.0,"agencyCost":119400.0,"initPayment":4178999.0},"seller":{"incrementTax":141428.0,"additionalTax":8485.0,"incomeTax":0.0}},{"totalPrice":6015000.0,"buyer":{"deedTax":176142.0,"agencyCost":120300.0,"initPayment":4210500.0},"seller":{"incrementTax":143571.0,"additionalTax":8614.0,"incomeTax":0.0}},{"totalPrice":6060000.0,"buyer":{"deedTax":177428.0,"agencyCost":121200.0,"initPayment":4242000.0},"seller":{"incrementTax":145714.0,"additionalTax":8742.0,"incomeTax":0.0}},{"totalPrice":6105000.0,"buyer":{"deedTax":178714.0,"agencyCost":122100.0,"initPayment":4273500.0},"seller":{"incrementTax":147857.0,"additionalTax":8871.0,"incomeTax":0.0}},{"totalPrice":6150000.0,"buyer":{"deedTax":180000.0,"agencyCost":123000.0,"initPayment":4305000.0},"seller":{"incrementTax":150000.0,"additionalTax":9000.0,"incomeTax":0.0}},{"totalPrice":6195000.0,"buyer":{"deedTax":181285.0,"agencyCost":123900.0,"initPayment":4336500.0},"seller":{"incrementTax":152142.0,"additionalTax":9128.0,"incomeTax":0.0}},{"totalPrice":6240000.0,"buyer":{"deedTax":182571.0,"agencyCost":124800.0,"initPayment":4368000.0},"seller":{"incrementTax":154285.0,"additionalTax":9257.0,"incomeTax":0.0}},{"totalPrice":6285000.0,"buyer":{"deedTax":183857.0,"agencyCost":125700.0,"initPayment":4399500.0},"seller":{"incrementTax":156428.0,"additionalTax":9385.0,"incomeTax":0.0}},{"totalPrice":6330000.0,"buyer":{"deedTax":185142.0,"agencyCost":126600.0,"initPayment":4431000.0},"seller":{"incrementTax":158571.0,"additionalTax":9514.0,"incomeTax":0.0}},{"totalPrice":6375000.0,"buyer":{"deedTax":186428.0,"agencyCost":127500.0,"initPayment":4462500.0},"seller":{"incrementTax":160714.0,"additionalTax":9642.0,"incomeTax":0.0}},{"totalPrice":6420000.0,"buyer":{"deedTax":187714.0,"agencyCost":128400.0,"initPayment":4494000.0},"seller":{"incrementTax":162857.0,"additionalTax":9771.0,"incomeTax":0.0}},{"totalPrice":6465000.0,"buyer":{"deedTax":189000.0,"agencyCost":129300.0,"initPayment":4525500.0},"seller":{"incrementTax":165000.0,"additionalTax":9900.0,"incomeTax":0.0}},{"totalPrice":6510000.0,"buyer":{"deedTax":190285.0,"agencyCost":130200.0,"initPayment":4557000.0},"seller":{"incrementTax":167142.0,"additionalTax":10028.0,"incomeTax":0.0}},{"totalPrice":6555000.0,"buyer":{"deedTax":191571.0,"agencyCost":131100.0,"initPayment":4588500.0},"seller":{"incrementTax":169285.0,"additionalTax":10157.0,"incomeTax":0.0}},{"totalPrice":6600000.0,"buyer":{"deedTax":192857.0,"agencyCost":132000.0,"initPayment":4620000.0},"seller":{"incrementTax":171428.0,"additionalTax":10285.0,"incomeTax":0.0}},{"totalPrice":6645000.0,"buyer":{"deedTax":194142.0,"agencyCost":132900.0,"initPayment":4651500.0},"seller":{"incrementTax":173571.0,"additionalTax":10414.0,"incomeTax":0.0}},{"totalPrice":6690000.0,"buyer":{"deedTax":195428.0,"agencyCost":133800.0,"initPayment":4683000.0},"seller":{"incrementTax":175714.0,"additionalTax":10542.0,"incomeTax":0.0}},{"totalPrice":6735000.0,"buyer":{"deedTax":196714.0,"agencyCost":134700.0,"initPayment":4714500.0},"seller":{"incrementTax":177857.0,"additionalTax":10671.0,"incomeTax":0.0}},{"totalPrice":6780000.0,"buyer":{"deedTax":198000.0,"agencyCost":135600.0,"initPayment":4746000.0},"seller":{"incrementTax":180000.0,"additionalTax":10800.0,"incomeTax":0.0}},{"totalPrice":6825000.0,"buyer":{"deedTax":199285.0,"agencyCost":136500.0,"initPayment":4777500.0},"seller":{"incrementTax":182142.0,"additionalTax":10928.0,"incomeTax":0.0}},{"totalPrice":6870000.0,"buyer":{"deedTax":200571.0,"agencyCost":137400.0,"initPayment":4809000.0},"seller":{"incrementTax":184285.0,"additionalTax":11057.0,"incomeTax":0.0}},{"totalPrice":6915000.0,"buyer":{"deedTax":201857.0,"agencyCost":138300.0,"initPayment":4840500.0},"seller":{"incrementTax":186428.0,"additionalTax":11185.0,"incomeTax":0.0}},{"totalPrice":6960000.0,"buyer":{"deedTax":203142.0,"agencyCost":139200.0,"initPayment":4872000.0},"seller":{"incrementTax":188571.0,"additionalTax":11314.0,"incomeTax":0.0}},{"totalPrice":7005000.0,"buyer":{"deedTax":204428.0,"agencyCost":140100.0,"initPayment":4903500.0},"seller":{"incrementTax":190714.0,"additionalTax":11442.0,"incomeTax":0.0}},{"totalPrice":7050000.0,"buyer":{"deedTax":205714.0,"agencyCost":141000.0,"initPayment":4935000.0},"seller":{"incrementTax":192857.0,"additionalTax":11571.0,"incomeTax":0.0}},{"totalPrice":7095000.0,"buyer":{"deedTax":207000.0,"agencyCost":141900.0,"initPayment":4966500.0},"seller":{"incrementTax":195000.0,"additionalTax":11700.0,"incomeTax":0.0}},{"totalPrice":7140000.0,"buyer":{"deedTax":208285.0,"agencyCost":142800.0,"initPayment":4998000.0},"seller":{"incrementTax":197142.0,"additionalTax":11828.0,"incomeTax":0.0}},{"totalPrice":7185000.0,"buyer":{"deedTax":209571.0,"agencyCost":143700.0,"initPayment":5029500.0},"seller":{"incrementTax":199285.0,"additionalTax":11957.0,"incomeTax":0.0}},{"totalPrice":7230000.0,"buyer":{"deedTax":210857.0,"agencyCost":144600.0,"initPayment":5061000.0},"seller":{"incrementTax":201428.0,"additionalTax":12085.0,"incomeTax":0.0}},{"totalPrice":7275000.0,"buyer":{"deedTax":212142.0,"agencyCost":145500.0,"initPayment":5092500.0},"seller":{"incrementTax":203571.0,"additionalTax":12214.0,"incomeTax":0.0}},{"totalPrice":7320000.0,"buyer":{"deedTax":213428.0,"agencyCost":146400.0,"initPayment":5124000.0},"seller":{"incrementTax":205714.0,"additionalTax":12342.0,"incomeTax":0.0}},{"totalPrice":7365000.0,"buyer":{"deedTax":214714.0,"agencyCost":147300.0,"initPayment":5155500.0},"seller":{"incrementTax":207857.0,"additionalTax":12471.0,"incomeTax":0.0}},{"totalPrice":7410000.0,"buyer":{"deedTax":216000.0,"agencyCost":148200.0,"initPayment":5187000.0},"seller":{"incrementTax":210000.0,"additionalTax":12600.0,"incomeTax":0.0}},{"totalPrice":7455000.0,"buyer":{"deedTax":217285.0,"agencyCost":149100.0,"initPayment":5218500.0},"seller":{"incrementTax":212142.0,"additionalTax":12728.0,"incomeTax":0.0}},{"totalPrice":7500000.0,"buyer":{"deedTax":218571.0,"agencyCost":150000.0,"initPayment":5250000.0},"seller":{"incrementTax":214285.0,"additionalTax":12857.0,"incomeTax":0.0}},{"totalPrice":7545000.0,"buyer":{"deedTax":219857.0,"agencyCost":150900.0,"initPayment":5281500.0},"seller":{"incrementTax":216428.0,"additionalTax":12985.0,"incomeTax":0.0}},{"totalPrice":7590000.0,"buyer":{"deedTax":221142.0,"agencyCost":151800.0,"initPayment":5313000.0},"seller":{"incrementTax":218571.0,"additionalTax":13114.0,"incomeTax":0.0}},{"totalPrice":7635000.0,"buyer":{"deedTax":222428.0,"agencyCost":152700.0,"initPayment":5344500.0},"seller":{"incrementTax":220714.0,"additionalTax":13242.0,"incomeTax":0.0}},{"totalPrice":7680000.0,"buyer":{"deedTax":223714.0,"agencyCost":153600.0,"initPayment":5376000.0},"seller":{"incrementTax":222857.0,"additionalTax":13371.0,"incomeTax":0.0}},{"totalPrice":7725000.0,"buyer":{"deedTax":225000.0,"agencyCost":154500.0,"initPayment":5407500.0},"seller":{"incrementTax":225000.0,"additionalTax":13500.0,"incomeTax":0.0}},{"totalPrice":7770000.0,"buyer":{"deedTax":226285.0,"agencyCost":155400.0,"initPayment":5439000.0},"seller":{"incrementTax":227142.0,"additionalTax":13628.0,"incomeTax":0.0}},{"totalPrice":7815000.0,"buyer":{"deedTax":227571.0,"agencyCost":156300.0,"initPayment":5470500.0},"seller":{"incrementTax":229285.0,"additionalTax":13757.0,"incomeTax":0.0}},{"totalPrice":7860000.0,"buyer":{"deedTax":228857.0,"agencyCost":157200.0,"initPayment":5502000.0},"seller":{"incrementTax":231428.0,"additionalTax":13885.0,"incomeTax":0.0}},{"totalPrice":7905000.0,"buyer":{"deedTax":230142.0,"agencyCost":158100.0,"initPayment":5533500.0},"seller":{"incrementTax":233571.0,"additionalTax":14014.0,"incomeTax":0.0}},{"totalPrice":7950000.0,"buyer":{"deedTax":231428.0,"agencyCost":159000.0,"initPayment":5565000.0},"seller":{"incrementTax":235714.0,"additionalTax":14142.0,"incomeTax":0.0}},{"totalPrice":7995000.0,"buyer":{"deedTax":232714.0,"agencyCost":159900.0,"initPayment":5596500.0},"seller":{"incrementTax":237857.0,"additionalTax":14271.0,"incomeTax":0.0}},{"totalPrice":8040000.0,"buyer":{"deedTax":234000.0,"agencyCost":160800.0,"initPayment":5628000.0},"seller":{"incrementTax":240000.0,"additionalTax":14400.0,"incomeTax":0.0}},{"totalPrice":8085000.0,"buyer":{"deedTax":235285.0,"agencyCost":161700.0,"initPayment":5659500.0},"seller":{"incrementTax":242142.0,"additionalTax":14528.0,"incomeTax":0.0}},{"totalPrice":8130000.0,"buyer":{"deedTax":236571.0,"agencyCost":162600.0,"initPayment":5691000.0},"seller":{"incrementTax":244285.0,"additionalTax":14657.0,"incomeTax":0.0}},{"totalPrice":8175000.0,"buyer":{"deedTax":237857.0,"agencyCost":163500.0,"initPayment":5722500.0},"seller":{"incrementTax":246428.0,"additionalTax":14785.0,"incomeTax":0.0}},{"totalPrice":8220000.0,"buyer":{"deedTax":239142.0,"agencyCost":164400.0,"initPayment":5754000.0},"seller":{"incrementTax":248571.0,"additionalTax":14914.0,"incomeTax":0.0}},{"totalPrice":8265000.0,"buyer":{"deedTax":240428.0,"agencyCost":165300.0,"initPayment":5785500.0},"seller":{"incrementTax":250714.0,"additionalTax":15042.0,"incomeTax":0.0}},{"totalPrice":8310000.0,"buyer":{"deedTax":241714.0,"agencyCost":166200.0,"initPayment":5817000.0},"seller":{"incrementTax":252857.0,"additionalTax":15171.0,"incomeTax":0.0}},{"totalPrice":8355000.0,"buyer":{"deedTax":243000.0,"agencyCost":167100.0,"initPayment":5848500.0},"seller":{"incrementTax":255000.0,"additionalTax":15300.0,"incomeTax":0.0}},{"totalPrice":8400000.0,"buyer":{"deedTax":244285.0,"agencyCost":168000.0,"initPayment":5880000.0},"seller":{"incrementTax":257142.0,"additionalTax":15428.0,"incomeTax":0.0}},{"totalPrice":8445000.0,"buyer":{"deedTax":245571.0,"agencyCost":168900.0,"initPayment":5911500.0},"seller":{"incrementTax":259285.0,"additionalTax":15557.0,"incomeTax":0.0}},{"totalPrice":8490000.0,"buyer":{"deedTax":246857.0,"agencyCost":169800.0,"initPayment":5943000.0},"seller":{"incrementTax":261428.0,"additionalTax":15685.0,"incomeTax":0.0}},{"totalPrice":8535000.0,"buyer":{"deedTax":248142.0,"agencyCost":170700.0,"initPayment":5974500.0},"seller":{"incrementTax":263571.0,"additionalTax":15814.0,"incomeTax":0.0}},{"totalPrice":8580000.0,"buyer":{"deedTax":249428.0,"agencyCost":171600.0,"initPayment":6006000.0},"seller":{"incrementTax":265714.0,"additionalTax":15942.0,"incomeTax":0.0}},{"totalPrice":8625000.0,"buyer":{"deedTax":250714.0,"agencyCost":172500.0,"initPayment":6037500.0},"seller":{"incrementTax":267857.0,"additionalTax":16071.0,"incomeTax":0.0}},{"totalPrice":8670000.0,"buyer":{"deedTax":252000.0,"agencyCost":173400.0,"initPayment":6069000.0},"seller":{"incrementTax":270000.0,"additionalTax":16200.0,"incomeTax":0.0}},{"totalPrice":8715000.0,"buyer":{"deedTax":253285.0,"agencyCost":174300.0,"initPayment":6100500.0},"seller":{"incrementTax":272142.0,"additionalTax":16328.0,"incomeTax":0.0}},{"totalPrice":8760000.0,"buyer":{"deedTax":254571.0,"agencyCost":175200.0,"initPayment":6132000.0},"seller":{"incrementTax":274285.0,"additionalTax":16457.0,"incomeTax":0.0}},{"totalPrice":8805000.0,"buyer":{"deedTax":255857.0,"agencyCost":176100.0,"initPayment":6163500.0},"seller":{"incrementTax":276428.0,"additionalTax":16585.0,"incomeTax":0.0}},{"totalPrice":8850000.0,"buyer":{"deedTax":257142.0,"agencyCost":177000.0,"initPayment":6195000.0},"seller":{"incrementTax":278571.0,"additionalTax":16714.0,"incomeTax":0.0}},{"totalPrice":8895000.0,"buyer":{"deedTax":258428.0,"agencyCost":177900.0,"initPayment":6226500.0},"seller":{"incrementTax":280714.0,"additionalTax":16842.0,"incomeTax":0.0}},{"totalPrice":8940000.0,"buyer":{"deedTax":259714.0,"agencyCost":178800.0,"initPayment":6258000.0},"seller":{"incrementTax":282857.0,"additionalTax":16971.0,"incomeTax":0.0}},{"totalPrice":8985000.0,"buyer":{"deedTax":261000.0,"agencyCost":179700.0,"initPayment":6289500.0},"seller":{"incrementTax":285000.0,"additionalTax":17100.0,"incomeTax":0.0}},{"totalPrice":9030000.0,"buyer":{"deedTax":262285.0,"agencyCost":180600.0,"initPayment":6321000.0},"seller":{"incrementTax":287142.0,"additionalTax":17228.0,"incomeTax":0.0}},{"totalPrice":9075000.0,"buyer":{"deedTax":263571.0,"agencyCost":181500.0,"initPayment":6352500.0},"seller":{"incrementTax":289285.0,"additionalTax":17357.0,"incomeTax":0.0}},{"totalPrice":9120000.0,"buyer":{"deedTax":264857.0,"agencyCost":182400.0,"initPayment":6384000.0},"seller":{"incrementTax":291428.0,"additionalTax":17485.0,"incomeTax":0.0}},{"totalPrice":9165000.0,"buyer":{"deedTax":266142.0,"agencyCost":183300.0,"initPayment":6415500.0},"seller":{"incrementTax":293571.0,"additionalTax":17614.0,"incomeTax":0.0}},{"totalPrice":9210000.0,"buyer":{"deedTax":267428.0,"agencyCost":184200.0,"initPayment":6447000.0},"seller":{"incrementTax":295714.0,"additionalTax":17742.0,"incomeTax":0.0}},{"totalPrice":9255000.0,"buyer":{"deedTax":268714.0,"agencyCost":185100.0,"initPayment":6478500.0},"seller":{"incrementTax":297857.0,"additionalTax":17871.0,"incomeTax":0.0}},{"totalPrice":9300000.0,"buyer":{"deedTax":270000.0,"agencyCost":186000.0,"initPayment":6510000.0},"seller":{"incrementTax":300000.0,"additionalTax":18000.0,"incomeTax":0.0}},{"totalPrice":9345000.0,"buyer":{"deedTax":271285.0,"agencyCost":186900.0,"initPayment":6541500.0},"seller":{"incrementTax":302142.0,"additionalTax":18128.0,"incomeTax":0.0}},{"totalPrice":9390000.0,"buyer":{"deedTax":272571.0,"agencyCost":187800.0,"initPayment":6573000.0},"seller":{"incrementTax":304285.0,"additionalTax":18257.0,"incomeTax":0.0}},{"totalPrice":9435000.0,"buyer":{"deedTax":273857.0,"agencyCost":188700.0,"initPayment":6604500.0},"seller":{"incrementTax":306428.0,"additionalTax":18385.0,"incomeTax":0.0}},{"totalPrice":9480000.0,"buyer":{"deedTax":275142.0,"agencyCost":189600.0,"initPayment":6636000.0},"seller":{"incrementTax":308571.0,"additionalTax":18514.0,"incomeTax":0.0}},{"totalPrice":9525000.0,"buyer":{"deedTax":276428.0,"agencyCost":190500.0,"initPayment":6667500.0},"seller":{"incrementTax":310714.0,"additionalTax":18642.0,"incomeTax":0.0}},{"totalPrice":9570000.0,"buyer":{"deedTax":277714.0,"agencyCost":191400.0,"initPayment":6699000.0},"seller":{"incrementTax":312857.0,"additionalTax":18771.0,"incomeTax":0.0}},{"totalPrice":9615000.0,"buyer":{"deedTax":279000.0,"agencyCost":192300.0,"initPayment":6730500.0},"seller":{"incrementTax":315000.0,"additionalTax":18900.0,"incomeTax":0.0}},{"totalPrice":9660000.0,"buyer":{"deedTax":280285.0,"agencyCost":193200.0,"initPayment":6762000.0},"seller":{"incrementTax":317142.0,"additionalTax":19028.0,"incomeTax":0.0}},{"totalPrice":9705000.0,"buyer":{"deedTax":281571.0,"agencyCost":194100.0,"initPayment":6793500.0},"seller":{"incrementTax":319285.0,"additionalTax":19157.0,"incomeTax":0.0}},{"totalPrice":9750000.0,"buyer":{"deedTax":282857.0,"agencyCost":195000.0,"initPayment":6825000.0},"seller":{"incrementTax":321428.0,"additionalTax":19285.0,"incomeTax":0.0}},{"totalPrice":9795000.0,"buyer":{"deedTax":284142.0,"agencyCost":195900.0,"initPayment":6856500.0},"seller":{"incrementTax":323571.0,"additionalTax":19414.0,"incomeTax":0.0}},{"totalPrice":9840000.0,"buyer":{"deedTax":285428.0,"agencyCost":196800.0,"initPayment":6888000.0},"seller":{"incrementTax":325714.0,"additionalTax":19542.0,"incomeTax":0.0}},{"totalPrice":9885000.0,"buyer":{"deedTax":286714.0,"agencyCost":197700.0,"initPayment":6919500.0},"seller":{"incrementTax":327857.0,"additionalTax":19671.0,"incomeTax":0.0}},{"totalPrice":9930000.0,"buyer":{"deedTax":288000.0,"agencyCost":198600.0,"initPayment":6951000.0},"seller":{"incrementTax":330000.0,"additionalTax":19800.0,"incomeTax":0.0}},{"totalPrice":9975000.0,"buyer":{"deedTax":289285.0,"agencyCost":199500.0,"initPayment":6982500.0},"seller":{"incrementTax":332142.0,"additionalTax":19928.0,"incomeTax":0.0}},{"totalPrice":1.002E7,"buyer":{"deedTax":290571.0,"agencyCost":200400.0,"initPayment":7014000.0},"seller":{"incrementTax":334285.0,"additionalTax":20057.0,"incomeTax":0.0}},{"totalPrice":1.0065E7,"buyer":{"deedTax":291857.0,"agencyCost":201300.0,"initPayment":7045500.0},"seller":{"incrementTax":336428.0,"additionalTax":20185.0,"incomeTax":0.0}},{"totalPrice":1.011E7,"buyer":{"deedTax":293142.0,"agencyCost":202200.0,"initPayment":7077000.0},"seller":{"incrementTax":338571.0,"additionalTax":20314.0,"incomeTax":0.0}},{"totalPrice":1.0155E7,"buyer":{"deedTax":294428.0,"agencyCost":203100.0,"initPayment":7108500.0},"seller":{"incrementTax":340714.0,"additionalTax":20442.0,"incomeTax":0.0}},{"totalPrice":1.02E7,"buyer":{"deedTax":295714.0,"agencyCost":204000.0,"initPayment":7140000.0},"seller":{"incrementTax":342857.0,"additionalTax":20571.0,"incomeTax":0.0}},{"totalPrice":1.0245E7,"buyer":{"deedTax":297000.0,"agencyCost":204900.0,"initPayment":7171500.0},"seller":{"incrementTax":345000.0,"additionalTax":20700.0,"incomeTax":0.0}},{"totalPrice":1.029E7,"buyer":{"deedTax":298285.0,"agencyCost":205800.0,"initPayment":7203000.0},"seller":{"incrementTax":347142.0,"additionalTax":20828.0,"incomeTax":0.0}},{"totalPrice":1.0335E7,"buyer":{"deedTax":299571.0,"agencyCost":206700.0,"initPayment":7234500.0},"seller":{"incrementTax":349285.0,"additionalTax":20957.0,"incomeTax":0.0}},{"totalPrice":1.038E7,"buyer":{"deedTax":300857.0,"agencyCost":207600.0,"initPayment":7266000.0},"seller":{"incrementTax":351428.0,"additionalTax":21085.0,"incomeTax":0.0}},{"totalPrice":1.0425E7,"buyer":{"deedTax":302142.0,"agencyCost":208500.0,"initPayment":7297500.0},"seller":{"incrementTax":353571.0,"additionalTax":21214.0,"incomeTax":0.0}},{"totalPrice":1.047E7,"buyer":{"deedTax":303428.0,"agencyCost":209400.0,"initPayment":7329000.0},"seller":{"incrementTax":355714.0,"additionalTax":21342.0,"incomeTax":0.0}},{"totalPrice":1.0515E7,"buyer":{"deedTax":304714.0,"agencyCost":210300.0,"initPayment":7360499.0},"seller":{"incrementTax":357857.0,"additionalTax":21471.0,"incomeTax":0.0}},{"totalPrice":1.056E7,"buyer":{"deedTax":306000.0,"agencyCost":211200.0,"initPayment":7391999.0},"seller":{"incrementTax":360000.0,"additionalTax":21600.0,"incomeTax":0.0}},{"totalPrice":1.0605E7,"buyer":{"deedTax":307285.0,"agencyCost":212100.0,"initPayment":7423499.0},"seller":{"incrementTax":362142.0,"additionalTax":21728.0,"incomeTax":0.0}},{"totalPrice":1.065E7,"buyer":{"deedTax":308571.0,"agencyCost":213000.0,"initPayment":7454999.0},"seller":{"incrementTax":364285.0,"additionalTax":21857.0,"incomeTax":0.0}},{"totalPrice":1.0695E7,"buyer":{"deedTax":309857.0,"agencyCost":213900.0,"initPayment":7486499.0},"seller":{"incrementTax":366428.0,"additionalTax":21985.0,"incomeTax":0.0}},{"totalPrice":1.074E7,"buyer":{"deedTax":311142.0,"agencyCost":214800.0,"initPayment":7517999.0},"seller":{"incrementTax":368571.0,"additionalTax":22114.0,"incomeTax":0.0}},{"totalPrice":1.0785E7,"buyer":{"deedTax":312428.0,"agencyCost":215700.0,"initPayment":7549499.0},"seller":{"incrementTax":370714.0,"additionalTax":22242.0,"incomeTax":0.0}},{"totalPrice":1.083E7,"buyer":{"deedTax":313714.0,"agencyCost":216600.0,"initPayment":7580999.0},"seller":{"incrementTax":372857.0,"additionalTax":22371.0,"incomeTax":0.0}},{"totalPrice":1.0875E7,"buyer":{"deedTax":315000.0,"agencyCost":217500.0,"initPayment":7612499.0},"seller":{"incrementTax":375000.0,"additionalTax":22500.0,"incomeTax":0.0}},{"totalPrice":1.092E7,"buyer":{"deedTax":316285.0,"agencyCost":218400.0,"initPayment":7643999.0},"seller":{"incrementTax":377142.0,"additionalTax":22628.0,"incomeTax":0.0}},{"totalPrice":1.0965E7,"buyer":{"deedTax":317571.0,"agencyCost":219300.0,"initPayment":7675499.0},"seller":{"incrementTax":379285.0,"additionalTax":22757.0,"incomeTax":0.0}},{"totalPrice":1.101E7,"buyer":{"deedTax":318857.0,"agencyCost":220200.0,"initPayment":7706999.0},"seller":{"incrementTax":381428.0,"additionalTax":22885.0,"incomeTax":0.0}},{"totalPrice":1.1055E7,"buyer":{"deedTax":320142.0,"agencyCost":221100.0,"initPayment":7738499.0},"seller":{"incrementTax":383571.0,"additionalTax":23014.0,"incomeTax":0.0}},{"totalPrice":1.11E7,"buyer":{"deedTax":321428.0,"agencyCost":222000.0,"initPayment":7769999.0},"seller":{"incrementTax":385714.0,"additionalTax":23142.0,"incomeTax":0.0}},{"totalPrice":1.1145E7,"buyer":{"deedTax":322714.0,"agencyCost":222900.0,"initPayment":7801499.0},"seller":{"incrementTax":387857.0,"additionalTax":23271.0,"incomeTax":0.0}},{"totalPrice":1.119E7,"buyer":{"deedTax":324000.0,"agencyCost":223800.0,"initPayment":7832999.0},"seller":{"incrementTax":390000.0,"additionalTax":23400.0,"incomeTax":0.0}},{"totalPrice":1.1235E7,"buyer":{"deedTax":325285.0,"agencyCost":224700.0,"initPayment":7864499.0},"seller":{"incrementTax":392142.0,"additionalTax":23528.0,"incomeTax":0.0}},{"totalPrice":1.128E7,"buyer":{"deedTax":326571.0,"agencyCost":225600.0,"initPayment":7895999.0},"seller":{"incrementTax":394285.0,"additionalTax":23657.0,"incomeTax":0.0}},{"totalPrice":1.1325E7,"buyer":{"deedTax":327857.0,"agencyCost":226500.0,"initPayment":7927499.0},"seller":{"incrementTax":396428.0,"additionalTax":23785.0,"incomeTax":0.0}},{"totalPrice":1.137E7,"buyer":{"deedTax":329142.0,"agencyCost":227400.0,"initPayment":7958999.0},"seller":{"incrementTax":398571.0,"additionalTax":23914.0,"incomeTax":0.0}},{"totalPrice":1.1415E7,"buyer":{"deedTax":330428.0,"agencyCost":228300.0,"initPayment":7990499.0},"seller":{"incrementTax":400714.0,"additionalTax":24042.0,"incomeTax":0.0}},{"totalPrice":1.146E7,"buyer":{"deedTax":331714.0,"agencyCost":229200.0,"initPayment":8021999.0},"seller":{"incrementTax":402857.0,"additionalTax":24171.0,"incomeTax":0.0}},{"totalPrice":1.1505E7,"buyer":{"deedTax":333000.0,"agencyCost":230100.0,"initPayment":8053499.0},"seller":{"incrementTax":405000.0,"additionalTax":24300.0,"incomeTax":0.0}},{"totalPrice":1.155E7,"buyer":{"deedTax":334285.0,"agencyCost":231000.0,"initPayment":8084999.0},"seller":{"incrementTax":407142.0,"additionalTax":24428.0,"incomeTax":0.0}},{"totalPrice":1.1595E7,"buyer":{"deedTax":335571.0,"agencyCost":231900.0,"initPayment":8116499.0},"seller":{"incrementTax":409285.0,"additionalTax":24557.0,"incomeTax":0.0}},{"totalPrice":1.164E7,"buyer":{"deedTax":336857.0,"agencyCost":232800.0,"initPayment":8147999.0},"seller":{"incrementTax":411428.0,"additionalTax":24685.0,"incomeTax":0.0}},{"totalPrice":1.1685E7,"buyer":{"deedTax":338142.0,"agencyCost":233700.0,"initPayment":8179499.0},"seller":{"incrementTax":413571.0,"additionalTax":24814.0,"incomeTax":0.0}},{"totalPrice":1.173E7,"buyer":{"deedTax":339428.0,"agencyCost":234600.0,"initPayment":8210999.0},"seller":{"incrementTax":415714.0,"additionalTax":24942.0,"incomeTax":0.0}},{"totalPrice":1.1775E7,"buyer":{"deedTax":340714.0,"agencyCost":235500.0,"initPayment":8242499.0},"seller":{"incrementTax":417857.0,"additionalTax":25071.0,"incomeTax":0.0}},{"totalPrice":1.182E7,"buyer":{"deedTax":342000.0,"agencyCost":236400.0,"initPayment":8273999.0},"seller":{"incrementTax":420000.0,"additionalTax":25200.0,"incomeTax":0.0}},{"totalPrice":1.1865E7,"buyer":{"deedTax":343285.0,"agencyCost":237300.0,"initPayment":8305499.0},"seller":{"incrementTax":422142.0,"additionalTax":25328.0,"incomeTax":0.0}},{"totalPrice":1.191E7,"buyer":{"deedTax":344571.0,"agencyCost":238200.0,"initPayment":8336999.0},"seller":{"incrementTax":424285.0,"additionalTax":25457.0,"incomeTax":0.0}},{"totalPrice":1.1955E7,"buyer":{"deedTax":345857.0,"agencyCost":239100.0,"initPayment":8368499.0},"seller":{"incrementTax":426428.0,"additionalTax":25585.0,"incomeTax":0.0}}]};
+
+            $('#initPaymentDescription').html(data.initPaymentDescription);
+            $('#deedTaxDescription').html(data.deedTaxDescription);
+            $('#incrementTaxDescription').html(data.incrementTaxDescription);
+            $('#additionalTaxDescription').html(data.additionalTaxDescription);
+            $('#incomeTaxDescription').html(data.incomeTaxDescription);
+            // 房屋挂牌价
+            var totalPrice = [];
+            // 契税
+            var deedTax = [];
+            // 中介费
+            var agencyCost = [];
+            // 首付
+            var initPayment = [];
+            // 增值税
+            var incrementTax = [];
+            // 附加税
+            var additionalTax = [];
+            // 个税
+            var incomeTax = [];
+            $.each(data.houses, function(i, p){
+                totalPrice.push(p.totalPrice);
+                deedTax.push(p.buyer.deedTax);
+                agencyCost.push(p.buyer.agencyCost);
+                initPayment.push(p.buyer.initPayment);
+                incrementTax.push(p.seller.incrementTax);
+                additionalTax.push(p.seller.additionalTax);
+                incomeTax.push(p.seller.incomeTax);
+            });
+
+            var myChart = echarts.init(document.getElementById("container"));
+            var app = {};
+            option = null;
+            option = {
+                title: {
+                    text: '购房各项费用堆叠图'
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data:['购房价格']
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                toolbox: {
+                    feature: {
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: totalPrice
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [
+                    {
+                        name:'买方-首付',
+                        type:'line',
+                        stack: '总量',
+                        symbol: 'none',
+                        data:initPayment
+                    },
+                    {
+                        name:'买方-契税',
+                        type:'line',
+                        stack: '总量',
+                        symbol: 'none',
+                        data:deedTax
+                    },
+                    {
+                        name:'买方-中介费',
+                        type:'line',
+                        stack: '总量',
+                        symbol: 'none',
+                        data:agencyCost
+                    },
+                    {
+                        name:'卖方-增值税',
+                        type:'line',
+                        stack: '总量',
+                        symbol: 'none',
+                        data:incrementTax
+                    },
+                    {
+                        name:'卖方-附加税',
+                        type:'line',
+                        stack: '总量',
+                        symbol: 'none',
+                        data:additionalTax
+                    },
+                    {
+                        name:'卖方-个税',
+                        type:'line',
+                        stack: '总量',
+                        symbol: 'none',
+                        data:incomeTax
+                    }
+                ]
+            };
+            if (option && typeof option === "object") {
+                myChart.setOption(option, true);
+            }
+        },
+        init : function() {
+            $('#calculator').click(houseOjb.calc);
+        }
+    };
+    $(document).ready(houseOjb.init);
+</script>
+</body>
+</html>

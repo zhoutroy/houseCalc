@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body >
+    <div>
+    <!--<form method="post">-->
+        <div class="form-group">
+            房屋类型:
+            <label class="radio-inline">
+                <input type="radio" name="isCommon" value="true" >普通
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="isCommon" value="false" checked="checked">非普通
+            </label>
+        </div>
+        <div class="form-group">
+            是否为首套:
+            <label class="radio-inline">
+                <input type="radio" name="isFirst" value="true" checked="checked">首套
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="isFirst" value="false">非首套
+            </label>
+        </div>
+        <div class="form-group">
+            是否有贷款记录:
+            <label class="radio-inline">
+                <input type="radio" name="hasLoan" value="true">是
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="hasLoan" value="false" checked="checked">否
+            </label>
+        </div>
+        <div class="form-group">
+            是否只有这一套住房:
+            <label class="radio-inline">
+                <input type="radio" name="isSingle" value="true" checked="checked">是
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="isSingle" value="false">否
+            </label>
+        </div>
+        <div class="form-group">
+            是否是动迁房:
+            <label class="radio-inline">
+                <input type="radio" name="isRelocate" value="true">是
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="isRelocate" value="false" checked="checked">否
+            </label>
+        </div>
+        <div class="form-group">
+            房产年限:
+            <label class="radio-inline">
+                <input type="radio" name="houseAge" value="5" checked="checked">满5年
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="houseAge" value="2">满2年
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="houseAge" value="0">不足2年
+            </label>
+        </div>
+        <div class="form-group">
+            建筑面积:
+            <label class="radio-inline">
+                <input type="radio" name="area" value="90" checked="checked">大于90平米
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="area" value="80">小于90平米
+            </label>
+        </div>
+        <div class="form-group">
+            中介费:
+            <label class="radio-inline">
+                <input type="radio" name="agency" value="1">1%
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="agency" value="2" checked="checked">2%
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="agency" value="3">3%
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="agency" value="4">4%
+            </label>
+        </div>
+        <div class="form-group">
+            <label for="lastPrice">房东之前买入价(单位:元)</label>
+            <input type="tel" class="form-control" id="lastPrice" placeholder="买入价" value="1000000" />
+        </div>
+        <button id="calculator" class="btn btn-default">生成</button>
+    <!--</form>-->
+    </div>
+<div id="container" style="height: 100%;min-height: 600px;"></div>
+    <p id="initPaymentDescription"></p>
+    <p id="deedTaxDescription"></p>
+    <p id="incrementTaxDescription"></p>
+    <p id="additionalTaxDescription"></p>
+    <p id="incomeTaxDescription"></p>
+<script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
+<script type="text/javascript">
+
+    var houseOjb = {
+        calc : function() {
+            var param = {
+                isCommon : $('input[name="isCommon"]:checked').val(),
+                isFirst : $('input[name="isFirst"]:checked').val(),
+                hasLoan : $('input[name="hasLoan"]:checked').val(),
+                isSingle : $('input[name="isSingle"]:checked').val(),
+                isRelocate : $('input[name="isRelocate"]:checked').val(),
+                houseAge : $('input[name="houseAge"]:checked').val(),
+                area : $('input[name="area"]:checked').val(),
+                agency : $('input[name="agency"]:checked').val(),
+                lastPrice : $('#lastPrice').val()
+            };
+            $.post('http://localhost:8080/house', param, function (data) {
+                $('#initPaymentDescription').html(data.initPaymentDescription);
+                $('#deedTaxDescription').html(data.deedTaxDescription);
+                $('#incrementTaxDescription').html(data.incrementTaxDescription);
+                $('#additionalTaxDescription').html(data.additionalTaxDescription);
+                $('#incomeTaxDescription').html(data.incomeTaxDescription);
+                // 房屋挂牌价
+                var totalPrice = [];
+                // 契税
+                var deedTax = [];
+                // 中介费
+                var agencyCost = [];
+                // 首付
+                var initPayment = [];
+                // 增值税
+                var incrementTax = [];
+                // 附加税
+                var additionalTax = [];
+                // 个税
+                var incomeTax = [];
+                $.each(data.houses, function(i, p){
+                    totalPrice.push(p.totalPrice);
+                    deedTax.push(p.buyer.deedTax);
+                    agencyCost.push(p.buyer.agencyCost);
+                    initPayment.push(p.buyer.initPayment);
+                    incrementTax.push(p.seller.incrementTax);
+                    additionalTax.push(p.seller.additionalTax);
+                    incomeTax.push(p.seller.incomeTax);
+                });
+
+                var myChart = echarts.init(document.getElementById("container"));
+                var app = {};
+                option = null;
+                option = {
+                    title: {
+                        text: '购房各项费用堆叠图'
+                    },
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        data:['购房价格']
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    toolbox: {
+                        feature: {
+                            saveAsImage: {}
+                        }
+                    },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: totalPrice
+                    },
+                    yAxis: {
+                        type: 'value'
+                    },
+                    series: [
+                        {
+                            name:'买方-首付',
+                            type:'line',
+                            stack: '总量',
+                            symbol: 'none',
+                            data:initPayment
+                        },
+                        {
+                            name:'买方-契税',
+                            type:'line',
+                            stack: '总量',
+                            symbol: 'none',
+                            data:deedTax
+                        },
+                        {
+                            name:'买方-中介费',
+                            type:'line',
+                            stack: '总量',
+                            symbol: 'none',
+                            data:agencyCost
+                        },
+                        {
+                            name:'卖方-增值税',
+                            type:'line',
+                            stack: '总量',
+                            symbol: 'none',
+                            data:incrementTax
+                        },
+                        {
+                            name:'卖方-附加税',
+                            type:'line',
+                            stack: '总量',
+                            symbol: 'none',
+                            data:additionalTax
+                        },
+                        {
+                            name:'卖方-个税',
+                            type:'line',
+                            stack: '总量',
+                            symbol: 'none',
+                            data:incomeTax
+                        }
+                    ]
+                };
+                if (option && typeof option === "object") {
+                    myChart.setOption(option, true);
+                }
+            });
+        },
+        init : function() {
+            $('#calculator').click(houseOjb.calc);
+        }
+    };
+    $(document).ready(houseOjb.init);
+</script>
+</body>
+</html>
